@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Внутренний калькулятор предварительной стоимости модульного дома СИБРА.">
+  <title>Сметный калькулятор СИБРА</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar__inner">
+      <a class="brand" href="#top" aria-label="СИБРА - к началу калькулятора">
+        <svg width="38" height="38" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 27c9-2 12-9 14-18m-9 8c4 1 7 3 9 6m-5-11c3 1 5 2 7 4m4-7c-1 8-4 14-10 18v12h17V25l-9-6-8 6M25 39v-8h6v8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>СИБРА</span>
+      </a>
+      <div class="topbar__meta"><span class="internal-badge">Внутренний инструмент</span><button class="ghost" id="resetButton" type="button">Сбросить</button></div>
+    </div>
+  </header>
+
+  <main id="top" class="shell page">
+    <section class="page-heading">
+      <div><p>Рабочий расчет для сотрудников</p><h1>Сметный калькулятор модульного дома</h1><span>Заполните параметры дома и при необходимости скорректируйте рабочие ставки.</span></div>
+      <div class="quick-metrics"><div><small>Площадь</small><strong id="headerArea">42 м²</strong></div><div><small>Модулей</small><strong id="headerModules">2</strong></div><div><small>Этажей</small><strong id="headerFloors">1</strong></div></div>
+    </section>
+
+    <div class="layout">
+      <form class="calculator" id="calculator" novalidate>
+        <section class="panel section" aria-labelledby="geometry-title">
+          <div class="section-heading"><span>01</span><div><h2 id="geometry-title">Конфигурация дома</h2><p>Основные параметры для расчета площади</p></div></div>
+          <div class="module-table-head" aria-hidden="true"><span>Тип</span><span>Ширина, м</span><span>Длина, м</span><span>Количество</span><span></span></div>
+          <div class="module-rows" id="moduleRows"></div>
+          <div class="module-actions"><button class="secondary-button" id="addModuleButton" type="button">+ Добавить другой размер</button><label class="field floor-field">Этажность<select id="floors" name="floors"><option value="1" selected>1 этаж</option><option value="2">2 этажа</option><option value="3">3 этажа</option></select></label></div>
+          <div class="area-row"><div><small>Расчетная площадь дома</small><strong id="areaPreview">24 м²</strong></div><p>Сумма площадей всех модулей × этажи</p></div>
+        </section>
+
+        <section class="panel section" aria-labelledby="package-title">
+          <div class="section-heading"><span>02</span><div><h2 id="package-title">Комплектация и отделка</h2><p>Выберите состав работ и материалов</p></div></div>
+          <div class="fields fields--two">
+            <label class="field">Комплектация
+              <select id="packageType" name="packageType"><option value="base">Базовая</option><option value="turnkey" selected>Под ключ</option></select>
+            </label>
+            <label class="field">Расчетная ставка
+              <span class="money-input"><input id="pricePerSqm" name="pricePerSqm" type="number" min="0" step="100" value="63100" inputmode="numeric"><b>₽/м²</b></span>
+              <small class="hint">Можно изменить для конкретного расчета</small>
+            </label>
+            <label class="field">Напольное покрытие
+              <select id="flooring" name="flooring"><option value="linoleum">Линолеум - включен в комплектацию</option><option value="laminate">Ламинат - доплата</option></select>
+            </label>
+            <label class="field">Окна
+              <select id="windows" name="windows"><option value="white">Белые - включены</option><option value="graphite">Графит</option></select>
+            </label>
+            <label class="field">Отопление
+              <select id="heating" name="heating"><option value="none">Без отопления</option><option value="convectors" selected>Электрические конвекторы</option><option value="floor">Теплый пол</option><option value="combo">Комбинированное</option></select>
+            </label>
+            <label class="field">Количество санузлов
+              <input id="bathrooms" name="bathrooms" type="number" min="0" max="6" value="1" inputmode="numeric">
+            </label>
+          </div>
+        </section>
+
+        <section class="panel section" aria-labelledby="extra-title">
+          <div class="section-heading"><span>03</span><div><h2 id="extra-title">Дополнительные работы</h2><p>Укажите объемы и согласованные суммы</p></div></div>
+          <div class="fields fields--two">
+            <label class="field">Стоимость террасы / веранды
+              <span class="money-input"><input id="terraceCost" name="terraceCost" type="number" min="0" step="1000" value="0" inputmode="numeric"><b>₽</b></span>
+              <small class="hint">Общая согласованная стоимость постройки</small>
+            </label>
+            <label class="field">Расстояние доставки
+              <span class="money-input"><input id="distance" name="distance" type="number" min="0" max="3000" value="30" inputmode="numeric"><b>км</b></span>
+              <small class="hint">Первые 30 км включены</small>
+            </label>
+            <label class="field">Фундамент
+              <span class="money-input"><input id="foundation" name="foundation" type="number" min="0" step="1000" value="0" inputmode="numeric"><b>₽</b></span>
+            </label>
+            <label class="field">Скважина
+              <span class="money-input"><input id="well" name="well" type="number" min="0" step="1000" value="0" inputmode="numeric"><b>₽</b></span>
+            </label>
+            <label class="field">Септик и кессон
+              <span class="money-input"><input id="septic" name="septic" type="number" min="0" step="1000" value="0" inputmode="numeric"><b>₽</b></span>
+            </label>
+            <label class="field">Прочие работы
+              <span class="money-input"><input id="other" name="other" type="number" min="0" step="1000" value="0" inputmode="numeric"><b>₽</b></span>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel section" aria-labelledby="rates-title">
+          <details class="rates" id="ratesPanel"><summary><span><b id="rates-title">Рабочие ставки</b><small>Раскройте, чтобы изменить коэффициенты опций</small></span><span class="chevron">⌄</span></summary>
+            <div class="rate-note">Стартовые ставки нужны для предварительного ориентира. Перед отправкой расчета проверьте их по актуальному прайсу.</div>
+            <div class="fields fields--three rate-fields">
+              <label class="field">Базовая, ₽/м²<input name="rateBase" type="number" min="0" step="100" value="45300"></label>
+              <label class="field">Под ключ, ₽/м²<input name="rateTurnkey" type="number" min="0" step="100" value="63100"></label>
+              <label class="field">Линолеум, ₽/м²<input name="rateLinoleum" type="number" min="0" step="100" value="2500"></label>
+              <label class="field">Ламинат, ₽/м²<input name="rateLaminate" type="number" min="0" step="100" value="4500"></label>
+              <label class="field">Окна графит, ₽/модуль<input name="rateGraphite" type="number" min="0" step="1000" value="120000"></label>
+              <label class="field">Конвекторы, ₽/м²<input name="rateConvectors" type="number" min="0" step="100" value="2200"></label>
+              <label class="field">Теплый пол, ₽/м²<input name="rateFloorHeating" type="number" min="0" step="100" value="4200"></label>
+              <label class="field">Комби, ₽/м²<input name="rateCombo" type="number" min="0" step="100" value="6500"></label>
+              <label class="field">Доп. санузел, ₽/шт<input name="rateBathroom" type="number" min="0" step="1000" value="250000"></label>
+              <label class="field">Доставка, ₽/км<input name="rateDelivery" type="number" min="0" step="10" value="250"></label>
+            </div>
+          </details>
+        </section>
+
+        <section class="panel section" aria-labelledby="adjustment-title">
+          <div class="section-heading"><span>04</span><div><h2 id="adjustment-title">Скидка</h2><p>Применяется к общей сумме расчета</p></div></div>
+          <div class="discount-field">
+            <label class="field">Скидка
+              <span class="money-input"><input id="discount" name="discount" type="number" min="0" max="50" step="0.5" value="0" inputmode="decimal"><b>%</b></span>
+            </label>
+          </div>
+        </section>
+      </form>
+
+      <aside class="panel summary" aria-live="polite">
+        <div class="summary__top"><span class="status">Предварительный расчет</span><p>Ориентировочная стоимость</p><h2 id="total">0 ₽</h2><small id="pricePerMeter"></small></div>
+        <div class="spec"><span id="specText"></span></div>
+        <dl class="breakdown" id="breakdown"></dl>
+        <div class="included" id="includedBlock"><strong>Включено в стоимость</strong><ul id="includedList"></ul></div>
+        <div class="adjustments" id="adjustments"></div>
+        <button class="primary" id="printButton" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg>Сохранить расчет в PDF</button>
+        <p class="disclaimer">Внутренний ориентировочный расчет. Не является коммерческим предложением. Перед передачей клиенту проверьте ставки, состав работ и условия участка.</p>
+      </aside>
+    </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
